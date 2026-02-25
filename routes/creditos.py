@@ -46,7 +46,7 @@ def cargar_rutas_credito(app):
             "celular": resultado["telefono"],
             "creditos": resultado["creditos"],
             "total": resultado["total"] if resultado["total"] is not None else 0
-}
+            }
             return jsonify([cliente])
         return jsonify([])
 
