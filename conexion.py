@@ -1,5 +1,6 @@
 import mysql.connector
 
+
 def obtenerConexion():
     return mysql.connector.connect(host="localhost",
                                    user="root",
