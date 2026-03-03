@@ -5,8 +5,8 @@ from models.inventario import Inventario
 
 def cargar_rutas_inventario(app):
 
-    @app.route("/cargar_inventario", methods=["GET"])
-    def cargarInventario():
+    @app.route("/operacionesProductos", methods=["POST"])
+    def operacionesProductos():
         try:
             idTendero = request.args.get("idTendero")
             inventario = Inventario()
