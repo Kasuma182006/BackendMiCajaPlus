@@ -12,7 +12,6 @@ class Inventario:
         print(resultado)
         return resultado
    
-    def buscarInventario(self,idTendero,idProducto):
     def buscarProducto(self,nombre,presentacion):
         conexion=obtenerConexion()
         cursor=conexion.cursor(dictionary= True)
