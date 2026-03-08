@@ -20,7 +20,6 @@ def cargar_rutas_Tenderos(app):
             nombre = data["nombre"]
 
             hash_telefono=hp.hash(telefono)
-
             if not cedula or not telefono or not nombre:
                 return jsonify({"error": "Faltan datos"}), 400
 
