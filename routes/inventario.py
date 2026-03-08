@@ -85,7 +85,20 @@ def cargar_rutas_inventario(app):
         else: 
             return jsonify (listaInventario),200
 
+    @app.route("/editarProducto", methods = ["POST"])
+    def editarProductos():
+        producto = request.get_json()
+        actualizarInventario = Inventario()
+        try: 
+            actualizarInventario.editarInventario(producto)
+            return jsonify({"succesful": "El Prodcuto se ha actualizado con éxito"}),200
+        
+        except Exception as e:
+            print(e)
+            return jsonify({"error": "Parece que ha habido un error al editar en la base de datos"}),500
 
+
+   
 
 
 
