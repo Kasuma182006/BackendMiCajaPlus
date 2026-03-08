@@ -6,6 +6,10 @@ hp=PasswordHasher(hash_len=32)
 
 def cargar_rutas_Tenderos(app):
 
+    @app.route("/")
+    def index():
+        return "micaja+"
+
     @app.route("/addtendero", methods=["POST"])
     def crear_tendero():
         try:

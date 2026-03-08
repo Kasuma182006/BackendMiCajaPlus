@@ -4,9 +4,9 @@ import mysql.connector
 def obtenerConexion():
     return mysql.connector.connect(host="localhost",
                                    user="root",
-                                   port = 3307,
+                                   port = "3306",
                                    password = "",
-                                   database="micajaplus")
+                                   database="pruebamicaja")
 
 ###return mysql.connector.connect(host="localhost",
                                    ##user="micajadb_admin",

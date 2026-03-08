@@ -1,21 +1,48 @@
 from flask import request,jsonify 
 from models.operaciones import Operaciones
+from models.clientes import Clientes
+from models.creditos import Creditos
 
 def cargar_rutas_operaciones(app):
+    
+    # probar si sirve
 
     @app.route("/crearventas", methods=["POST"])
     def crear_venta():
         try:
             venta = request.get_json()
-            venta_model = Operaciones()
-            resultado=venta_model.insertar_venta(venta)
-
-            if resultado==1:
-                return jsonify({"exito": True}), 201
-            
+            print(f"datos Venta {venta}")
+            tipoPago=venta['tipoPago']
+            if tipoPago == "credito":
+                cedulaCliente=venta['cedulaCliente']
+                cedulaTendero=venta['idTendero']
+                clienteModel=Clientes()
+                resultadoCliente=clienteModel.ConsultarClientes(cedulaCliente,cedulaTendero)
+                if resultadoCliente > 0:
+                    ventaModel = Operaciones()
+                    resultadoVenta=ventaModel.insertar_venta(venta)
+                    if resultadoVenta > 0:
+                        idVenta=resultadoVenta['idVenta']
+                        idCliente=resultadoCliente['idCliente']
+                        creditoModel= Creditos()
+                        resultadoCredito=creditoModel.insertar_credito(idVenta,idCliente)
+                        if resultadoCredito > 0:
+                            return jsonify({"credito exitoso"}),201
+                        else:
+                            return jsonify({"ocurrio un problema en el credito"}),500
+                    else:
+                        return jsonify({"no se pudo registrar la venta"}),500   
+                else:
+                    return jsonify({"cliente no registrado"}),500
             else:
-                return jsonify({"no se logro agregar"}),500
-
+                ventaModel = Operaciones()
+                resultadoVenta=ventaModel.insertar_venta(venta)
+                if resultadoVenta > 0:
+                    return jsonify ({"exito", True}),201
+                
+                else:
+                    return jsonify({"error venta"}),500
+                       
         except Exception as e:
             print(f"error: {e}")
             return jsonify({"error interno"}), 500
@@ -59,7 +86,7 @@ def cargar_rutas_operaciones(app):
             print(f"La base inicial es de {base}")
             base_model = Operaciones()
             resultado=base_model.insertarBase(base)
-            if resultado==1:
+            if resultado > 0:
                 return jsonify({"exito":True}),201
             else:
                 return jsonify({"no se logro registrar"}),500

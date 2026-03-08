@@ -8,7 +8,7 @@ class Operaciones:
     cursor.execute("INSERT INTO ventas (idTendero,mensaje,tipoPago,valor) VALUES (%s,%s,%s,%s)",
                    (data_venta['idTendero'],data_venta['mensaje'],data_venta['tipoPago'],data_venta['valor']))
     conexion.commit()
-    resultado=cursor.rowcount
+    resultado=cursor.lastrowid
     cursor.close()
     conexion.close()
     return resultado
@@ -39,7 +39,7 @@ class Operaciones:
     conexion=obtenerConexion()
     cursor=conexion.cursor()
     cursor.execute("INSERT INTO apertura (idTendero, baseInicial) VALUES (%s,%s)",
-                   (base["idTendero"],base["baseInicial"]))
+                   (base['idTendero'],base['baseInicial']))
     conexion.commit()
     resultado=cursor.rowcount
     cursor.close()
