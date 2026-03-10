@@ -16,6 +16,15 @@ def cargar_rutas_clientes(app):
     
         except Exception as e:
             return jsonify({"error": str(e)}), 500
+
+#editar cliente en routes   
+    @app.route("/actualizar_cliente", methods=["POST"])
+    def actualizar():
+        datos = request.get_json()
+        model = Clientes()
+        if model.actualizar_cliente(datos):
+            return jsonify({"mensaje": "exito"}), 200
+        return jsonify({"mensaje": "error"}), 400
         
 
 #     @app.route("/agregarcliente", methods=["POST"])
