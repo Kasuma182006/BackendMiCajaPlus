@@ -32,5 +32,18 @@ class Clientes:
             data_cliente['saldo'])
         conexion.commit()
         cursor.close()
+
+    # editar cliente en modelo
+
+    def actualizar_cliente(self, datos):
+        conexion = obtenerConexion()
+        cursor = conexion.cursor()
+        sql = "UPDATE cliente SET nombre=%s, telefono=%s, saldo=%s WHERE cedula=%s AND idTendero=%s"
+        cursor.execute(sql, (datos['nombre'], datos['telefono'], datos['saldo'], datos['cedula'], datos['idTendero']))
+        conexion.commit()
+        res = cursor.rowcount
+        cursor.close()
+        conexion.close()
+        return res
         conexion.close()
 
