@@ -11,13 +11,13 @@ def cargar_rutas_inventario(app):
         inventarioTendero = Inventario()
         
         if not producto:
-            return jsonify({"Error": "Datos incompletos "}), 400
+            return jsonify({"Error": "Datos incompletos "})
         else: 
             try: 
                 idProducto = inventarioTendero.buscarProducto( producto.get("nombre"), producto.get("presentacion"))
                 productoInventario = inventarioTendero.buscarInventario(producto.get("idTendero"), idProducto.get("idProductos"))
             except:
-                return jsonify({"error": "error en el servidor"}),500
+                return jsonify({"error": "error en el servidor"})
             
         if not productoInventario: 
             return jsonify({"error" "No se ha encontrado el producto en inventario"})
@@ -28,9 +28,9 @@ def cargar_rutas_inventario(app):
                 productoInventario["cantidad"] = productoInventario["cantidad"] - producto["cantidad"]
                 try:
                     inventarioTendero.actualizarProducto(productoInventario)
-                    return jsonify({"succesful": "Productos descontados correctamente"}),200
+                    return jsonify({"succesful": "Productos descontados correctamente"})
                 except:
-                    return jsonify ({"Error": "Error en al procesar"}),500
+                    return jsonify ({"Error": "Error en al procesar"})
             else :  
                 return jsonify({"Error": "La cantidad de productos en stok es menor a la cantidad de productos vendidos"},400)
 
@@ -38,10 +38,10 @@ def cargar_rutas_inventario(app):
             productoInventario["cantidad"] = productoInventario["cantidad"] + producto["cantidad"]
             try:
                 inventarioTendero.actualizarProducto(productoInventario)
-                return jsonify({"succesful": "Productos agregados correctamente"}),200
+                return jsonify({"succesful": "Productos agregados correctamente"})
             except:
-                return jsonify ({"Error": "Error en al intentar agregar productos"}),500
-            
+                return jsonify ({"Error": "Error en al intentar agregar productos"})
+        
 
 
     @app.route("/buscarProductos", methods = ["POST"])
@@ -53,11 +53,11 @@ def cargar_rutas_inventario(app):
             listaProductos =  inventarioTendero.buscarProductosSimilares(busqueda.get("nombre"))
         except Exception as e:
             print(e)
-            return jsonify({"error": "error con el servidor"}),500
+            return jsonify({"error": "error con el servidor"})
             
         
         if not listaProductos:
-            return jsonify({"error": "No se han encontrado coincidencias en los productos"}),400
+            return jsonify({"error": "No se han encontrado coincidencias en los productos"})
         
         print(f"lista de productos ${listaProductos}")
         
@@ -69,7 +69,7 @@ def cargar_rutas_inventario(app):
                 print(f"el producto es ${producto}")
             except Exception as e:
                 print(e)
-                return jsonify({"error":"error al consultar en la base de datos"}),500
+                return jsonify({"error":"error al consultar en la base de datos"})
             if not producto:
                 print(f"el producto ${i} no está en inventario")
                 producto = ""
@@ -83,7 +83,7 @@ def cargar_rutas_inventario(app):
             return jsonify({"error": "El producto no se encuentra en su inventario"})
         
         else: 
-            return jsonify (listaInventario),200
+            return jsonify (listaInventario)
 
     @app.route("/editarProducto", methods = ["POST"])
     def editarProductos():
@@ -91,11 +91,11 @@ def cargar_rutas_inventario(app):
         actualizarInventario = Inventario()
         try: 
             actualizarInventario.editarInventario(producto)
-            return jsonify({"succesful": "El Prodcuto se ha actualizado con éxito"}),200
+            return jsonify({"succesful": "El Prodcuto se ha actualizado con éxito"})
         
         except Exception as e:
             print(e)
-            return jsonify({"error": "Parece que ha habido un error al editar en la base de datos"}),500
+            return jsonify({"error": "Parece que ha habido un error al editar en la base de datos"})
 
 
    
