@@ -15,6 +15,8 @@ class Creditos:
     conexion.close()
     return resultado
    
+   
+   
 
 
    # def consultar_creditos(self,idTendero):

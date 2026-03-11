@@ -2,6 +2,7 @@ from flask import request,jsonify
 from models.operaciones import Operaciones
 from models.clientes import Clientes
 from models.creditos import Creditos
+from models.inventario import Inventario
 
 def cargar_rutas_operaciones(app):
     
@@ -12,6 +13,19 @@ def cargar_rutas_operaciones(app):
         try:
             venta = request.get_json()
             print(f"datos Venta {venta}")
+            
+            inventarioModel = Inventario()
+            resultado = inventarioModel.obtenerPrecio(venta)
+
+            if not resultado:
+                return jsonify({"error": "Producto no encontrado"}), 404
+
+            precioUnitario = resultado[0]
+            cantidad = venta.get('cantidad', 1)
+
+            venta['valor'] = precioUnitario * cantidad
+            tipoPago = venta.get('tipoPago')
+
             tipoPago=venta['tipoPago']
             if tipoPago == "credito":
                 cedulaCliente=venta['cedulaCliente']
@@ -27,25 +41,25 @@ def cargar_rutas_operaciones(app):
                         creditoModel= Creditos()
                         resultadoCredito=creditoModel.insertar_credito(idVenta,idCliente)
                         if resultadoCredito > 0:
-                            return jsonify({"credito exitoso"}),201
+                            return jsonify({"exitoso":"credito exitoso"}),201
                         else:
-                            return jsonify({"ocurrio un problema en el credito"}),500
+                            return jsonify({"exito":"ocurrio un problema en el credito"}),500
                     else:
-                        return jsonify({"no se pudo registrar la venta"}),500   
+                        return jsonify({"exito":"no se pudo registrar la venta"}),500   
                 else:
-                    return jsonify({"cliente no registrado"}),500
+                    return jsonify({"exito":"cliente no registrado"}),500
             else:
                 ventaModel = Operaciones()
                 resultadoVenta=ventaModel.insertar_venta(venta)
                 if resultadoVenta > 0:
-                    return jsonify ({"exito", True}),201
+                    return jsonify ({"exito": True, "total": venta['valor']}),201
                 
                 else:
-                    return jsonify({"error venta"}),500
+                    return jsonify({"error": "error venta"}),500
                        
         except Exception as e:
             print(f"error: {e}")
-            return jsonify({"error interno"}), 500
+            return jsonify({"error": "error interno"}), 500
         
 
     @app.route("/crearcosto", methods=["POST"])

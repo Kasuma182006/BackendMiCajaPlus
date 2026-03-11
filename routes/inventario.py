@@ -11,16 +11,20 @@ def cargar_rutas_inventario(app):
         inventarioTendero = Inventario()
         
         if not producto:
-            return jsonify({"Error": "Datos incompletos "})
+            return jsonify({"Error": "Datos incompletos "}),400
         else: 
             try: 
+                print (producto.get("nombre")+","+producto.get("presentacion"))
                 idProducto = inventarioTendero.buscarProducto( producto.get("nombre"), producto.get("presentacion"))
                 productoInventario = inventarioTendero.buscarInventario(producto.get("idTendero"), idProducto.get("idProductos"))
-            except:
-                return jsonify({"error": "error en el servidor"})
+            except Exception as e:
+                print(f"error en el servidor ${e}")
+                return jsonify({"error": "error en el servidor"}),500
             
         if not productoInventario: 
-            return jsonify({"error" "No se ha encontrado el producto en inventario"})
+            print("No se han encontrado coincidencias")
+            return jsonify({"error" "No se ha encontrado el producto en inventario"}),404
+        
         
         if (producto.get("operacion") == "descontar"):
 
@@ -28,19 +32,22 @@ def cargar_rutas_inventario(app):
                 productoInventario["cantidad"] = productoInventario["cantidad"] - producto["cantidad"]
                 try:
                     inventarioTendero.actualizarProducto(productoInventario)
-                    return jsonify({"succesful": "Productos descontados correctamente"})
+                    return jsonify({"succesful": "Productos descontados correctamente"}),200
                 except:
-                    return jsonify ({"Error": "Error en al procesar"})
+                    print("error al procesar")
+                    return jsonify ({"Error": "Error en al procesar"}),500
             else :  
+                print("la cantidad de productos en stock es menor a la cantidad de productos vendidos")
                 return jsonify({"Error": "La cantidad de productos en stok es menor a la cantidad de productos vendidos"},400)
 
         else: 
             productoInventario["cantidad"] = productoInventario["cantidad"] + producto["cantidad"]
             try:
                 inventarioTendero.actualizarProducto(productoInventario)
-                return jsonify({"succesful": "Productos agregados correctamente"})
+                return jsonify({"succesful": "Productos agregados correctamente"}),200
             except:
-                return jsonify ({"Error": "Error en al intentar agregar productos"})
+                print("error al intentar agregar productos")
+                return jsonify ({"Error": "Error en al intentar agregar productos"}),500
         
 
 
@@ -50,6 +57,7 @@ def cargar_rutas_inventario(app):
         inventarioTendero = Inventario()
         listaInventario = []
         try:
+            print(busqueda.get("nombre"))
             listaProductos =  inventarioTendero.buscarProductosSimilares(busqueda.get("nombre"))
         except Exception as e:
             print(e)
