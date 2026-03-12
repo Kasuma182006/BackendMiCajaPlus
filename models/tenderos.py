@@ -22,3 +22,12 @@ class Tenderos:
         cursor.close()
         conexion.close()
         return resultado
+    
+    def consultarCedulaTendero(self,cedula):
+        conexion=obtenerConexion()
+        cursor=conexion.cursor(dictionary=True)
+        cursor.execute("SELECT cedula FROM tendero WHERE cedula = %s",[cedula])
+        resultado=cursor.fetchone()
+        cursor.close()
+        conexion.close()
+        return resultado
