@@ -26,7 +26,7 @@ def cargar_rutas_Tenderos(app):
             tendero_model = Tenderos()
             resultado=tendero_model.crear_tendero(cedula,hash_telefono,nombre)
             if resultado==1:
-                return jsonify({"mensaje": "Tendero creado"}), 201
+                return jsonify({"mensaje": "Tendero creado"}), 200
             else:
                 return jsonify({"error":"Error al crear"}),500
 
@@ -61,3 +61,20 @@ def cargar_rutas_Tenderos(app):
         except Exception as e:
             print("Error en login:", e)
             return jsonify({"error"}), 500
+        
+    @app.route("/consultaCedulaTendero", methods=["POST"])
+    def consultaTendero():
+        try:
+            data = request.get_json()
+            print(data)
+            cedula=data['cedula']
+            if not cedula:
+                return jsonify({"error":"Faltan datos"}),400
+            modelTendero =  Tenderos()
+            resultado = modelTendero.consultarCedulaTendero(cedula)
+            if resultado:
+                return jsonify (resultado)
+            else:
+                return jsonify({"mensaje": "Cédula disponible"}), 404
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
