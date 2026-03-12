@@ -17,7 +17,7 @@ class Operaciones:
     conexion=obtenerConexion()
     cursor=conexion.cursor()
     cursor.execute("INSERT INTO costos (idTendero,mensaje,valor,proveedor) VALUES (%s,%s,%s,%s)",
-                   (data_costo['idTendero'],data_costo['mensaje'],data_costo['valor'],data_costo['proveedor']))
+                   (data_costo['idTendero'],data_costo['mensaje'],data_costo['precioCompra'],data_costo['proveedor']))
     conexion.commit()
     resultado=cursor.rowcount
     cursor.close()
@@ -28,7 +28,7 @@ class Operaciones:
     conexion=obtenerConexion()
     cursor=conexion.cursor()
     cursor.execute("INSERT INTO gastos (idTendero,mensaje,valor) VALUES (%s,%s,%s)",
-                  (data_gasto['idTendero'],data_gasto['mensaje'],data_gasto['valor']))  
+                  (data_gasto['idTendero'],data_gasto['mensaje'],data_gasto['precio']))  
     conexion.commit()
     resultado=cursor.rowcount
     cursor.close()

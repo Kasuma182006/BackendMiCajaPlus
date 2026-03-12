@@ -87,10 +87,10 @@ def cargar_rutas_operaciones(app):
             if resultado==1:
                 return jsonify({"exito":True}),201
             else:
-                return jsonify({"no se logro registrar"}),500
+                return jsonify({"error":"no se logro registrar"}),500
         except Exception as e:
             print(f"error: {e}")
-            return jsonify({"error interno"}),500
+            return jsonify({"error":"error interno"}),500
         
 
     @app.route("/agregarBase", methods= ["POST"])
