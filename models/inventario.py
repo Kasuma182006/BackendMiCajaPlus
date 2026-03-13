@@ -79,16 +79,17 @@ class Inventario:
 
     def obtenerPrecio(self,Producto):
         conexion = obtenerConexion()
-        cursor = conexion.cursor()
+        cursor = conexion.cursor(dictionary=True)
         try:
     
             cursor.execute( """
-                SELECT i.valorVenta, p.nombre 
+                SELECT i.valorVenta, p.nombre, i.cantidad
                 FROM inventario i
                 INNER JOIN productos p ON i.idProductos = p.idProductos 
                 WHERE i.idTendero = %s AND p.nombre = %s
             """, (Producto["idTendero"], Producto["nombre"]))
 
+        
             resultado= cursor.fetchone()
             return resultado 
         finally:    

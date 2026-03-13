@@ -13,10 +13,15 @@ def cargar_rutas_estadisticas(app):
             fechaInicial=dataEstadistica['fechaInicial']
             fechaFin=dataEstadistica['fechaFin']
             resultadoDatos=estadisticasModel.obtener_estadisticas(idTendero,fechaInicial,fechaFin)
-            print(f"resultado Estadisticas {resultadoDatos}")
-        
-            return jsonify([resultadoDatos])
+
+            if resultadoDatos:
+                print(f"resultado Estadisticas {resultadoDatos}")
             
+                return jsonify([resultadoDatos]),200
+            else:
+                print(f"resultado bien malo {resultadoDatos}")
+                return jsonify({resultadoDatos}),400
+                
         
             
         except Exception as e:

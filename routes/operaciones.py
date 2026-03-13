@@ -13,50 +13,48 @@ def cargar_rutas_operaciones(app):
         try:
             venta = request.get_json()
             print(f"datos Venta {venta}")
-            
             inventarioModel = Inventario()
-            resultado = inventarioModel.obtenerPrecio(venta)
-
-            if not resultado:
-                return jsonify({"error": "Producto no encontrado"}), 404
-
-            precioUnitario = resultado[0]
-            cantidad = venta.get('cantidad', 1)
-
-            venta['valor'] = precioUnitario * cantidad
-            tipoPago = venta.get('tipoPago')
-
-            tipoPago=venta['tipoPago']
-            if tipoPago == "credito":
-                cedulaCliente=venta['cedulaCliente']
-                cedulaTendero=venta['idTendero']
-                clienteModel=Clientes()
-                resultadoCliente=clienteModel.ConsultarClientes(cedulaCliente,cedulaTendero)
-                if resultadoCliente > 0:
-                    ventaModel = Operaciones()
-                    resultadoVenta=ventaModel.insertar_venta(venta)
-                    if resultadoVenta > 0:
-                        idVenta=resultadoVenta['idVenta']
-                        idCliente=resultadoCliente['idCliente']
-                        creditoModel= Creditos()
-                        resultadoCredito=creditoModel.insertar_credito(idVenta,idCliente)
-                        if resultadoCredito > 0:
-                            return jsonify({"exitoso":"credito exitoso"}),201
+            resultadoInv = inventarioModel.obtenerPrecio(venta)
+            if resultadoInv:
+                precioUnitario = resultadoInv['valorVenta']
+                cantidad = venta['cantidad']
+                venta['valor'] = precioUnitario * cantidad
+                tipoPago=venta['tipoPago']
+                if cantidad > 0:                
+                    if tipoPago == "credito":
+                        cedulaCliente=venta['cedulaCliente']
+                        cedulaTendero=venta['idTendero']
+                        clienteModel=Clientes()
+                        resultadoCliente=clienteModel.ConsultarClientes(cedulaCliente,cedulaTendero)
+                        if resultadoCliente:
+                            ventaModel = Operaciones()
+                            resultadoVenta=ventaModel.insertar_venta(venta)
+                            if resultadoVenta > 0:
+                                idVenta=resultadoVenta['idVenta']
+                                idCliente=resultadoCliente['idCliente']
+                                creditoModel= Creditos()
+                                resultadoCredito=creditoModel.insertar_credito(idVenta,idCliente)
+                                if resultadoCredito > 0:
+                                    return jsonify({"exitoso":"credito exitoso"}),201
+                                else:
+                                    return jsonify({"exito":"ocurrio un problema en el credito"}),400
+                            else:
+                                return jsonify({"exito":"no se pudo registrar la venta"}),400
                         else:
-                            return jsonify({"exito":"ocurrio un problema en el credito"}),500
+                            return jsonify({"exito":"cliente no registrado"}),400
                     else:
-                        return jsonify({"exito":"no se pudo registrar la venta"}),500   
+                        ventaModel = Operaciones()
+                        resultadoVenta=ventaModel.insertar_venta(venta)
+                        if resultadoVenta > 0:
+                            return jsonify ({"exito": True, "total": venta['valor']}),201
+                        
+                        else:
+                            return jsonify({"error": "error venta"}),500
                 else:
-                    return jsonify({"exito":"cliente no registrado"}),500
+                    return jsonify({"error":"no hay stock"}),404   
             else:
-                ventaModel = Operaciones()
-                resultadoVenta=ventaModel.insertar_venta(venta)
-                if resultadoVenta > 0:
-                    return jsonify ({"exito": True, "total": venta['valor']}),201
-                
-                else:
-                    return jsonify({"error": "error venta"}),500
-                       
+                return jsonify({"error":"fallo inventario"}) ,400        
+                            
         except Exception as e:
             print(f"error: {e}")
             return jsonify({"error": "error interno"}), 500

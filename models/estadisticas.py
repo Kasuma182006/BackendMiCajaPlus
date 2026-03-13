@@ -8,25 +8,25 @@ class Estadisticas:
         conexion = obtenerConexion()
         cursor = conexion.cursor(dictionary=True)
         cursor.execute("""SELECT
-        (SELECT SUM(valor) FROM ventas 
-        WHERE idTendero = %s AND tipoPago = "efectivo" AND fecha BETWEEN %s AND %s) AS ventas,
-                       
-        (SELECT SUM(valor) FROM ventas
-        WHERE idTendero = %s AND tipoPago = "credito" AND fecha BETWEEN %s AND %s) AS valorCredito,               
-                       
-        (SELECT COUNT(idVentas) FROM ventas
-        WHERE idTendero = %s AND tipoPago = "credito" AND fecha BETWEEN %s AND %s) AS ncreditos,
+        COALESCE((SELECT SUM(valor) FROM ventas 
+        WHERE idTendero = %s AND tipoPago = 'efectivo' AND fecha BETWEEN %s AND %s), 0) AS ventas,
+                        
+        COALESCE((SELECT SUM(valor) FROM ventas
+        WHERE idTendero = %s AND tipoPago = 'credito' AND fecha BETWEEN %s AND %s), 0) AS valorCredito,               
+                        
+        COALESCE((SELECT COUNT(idVentas) FROM ventas
+        WHERE idTendero = %s AND tipoPago = 'credito' AND fecha BETWEEN %s AND %s), 0) AS ncreditos,
 
-        (SELECT SUM(valor) FROM costos 
-        WHERE idTendero = %s AND fecha BETWEEN %s AND %s) AS costos,
+        COALESCE((SELECT SUM(valor) FROM costos 
+        WHERE idTendero = %s AND fecha BETWEEN %s AND %s), 0) AS costos,
 
-        (SELECT SUM(valor) FROM gastos 
-        WHERE idTendero = %s AND fecha BETWEEN %s AND %s) AS gastos;""",
-        (idTendero,fechaInicial,fechaFin,
-        idTendero,fechaInicial,fechaFin,
-        idTendero,fechaInicial,fechaFin,
-        idTendero,fechaInicial,fechaFin,
-        idTendero,fechaInicial,fechaFin))
+        COALESCE((SELECT SUM(valor) FROM gastos 
+        WHERE idTendero = %s AND fecha BETWEEN %s AND %s), 0) AS gastos;""",
+        (idTendero, fechaInicial, fechaFin, 
+        idTendero, fechaInicial, fechaFin, 
+        idTendero, fechaInicial, fechaFin, 
+        idTendero, fechaInicial, fechaFin, 
+        idTendero, fechaInicial, fechaFin))
         resultado = cursor.fetchone()
         cursor.close()
         conexion.close()
