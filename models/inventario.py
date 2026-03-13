@@ -11,22 +11,10 @@ class Inventario:
         conexion.close()
         print(resultado)
         return resultado
-   
-    def buscarProducto(self,nombre,presentacion):
-        conexion=obtenerConexion()
-        cursor=conexion.cursor(dictionary= True)
-        cursor.execute("""Select idProductos FROM productos where nombre = %s AND presentacion = %s""",(nombre,presentacion))
-        resultado= cursor.fetchone()
-        cursor.close()
-        conexion.close()
-        print(resultado)
-        return resultado
-   
+
     def buscarInventario(self,idTendero,idProducto):
         conexion=obtenerConexion()
         cursor=conexion.cursor(dictionary=True)
-        cursor.execute("""Select idInventario, cantidad From inventario where idTendero = %s AND idProductos = %s""", (idTendero,idProducto) )
-        resultado= cursor.fetchone()
         cursor.execute("""Select idInventario, cantidad From inventario where idTendero = %s AND idProductos = %s""", (idTendero,idProducto) )
         resultado= cursor.fetchone()
         cursor.close()
@@ -48,7 +36,18 @@ class Inventario:
     def buscarProductosSimilares(self,nombre):
         conexion=obtenerConexion()
         cursor=conexion.cursor(dictionary= True)
-        cursor.execute("""Select idProductos FROM productos where nombre = %s """,(nombre,))
+        patron = f"%{nombre}%"
+        cursor.execute("""Select idProductos FROM productos where nombre like %s """,(patron,))
+        resultado= cursor.fetchall()
+        cursor.close()
+        conexion.close()
+        print(resultado)
+        return resultado
+    
+    def buscarProductos(self,nombre,presentacion):
+        conexion=obtenerConexion()
+        cursor=conexion.cursor(dictionary= True)
+        cursor.execute("""Select idProductos FROM productos where nombre = %s and presentacion = %s """,(nombre,presentacion,))
         resultado= cursor.fetchall()
         cursor.close()
         conexion.close()
@@ -96,7 +95,31 @@ class Inventario:
             cursor.close()
             conexion.close()
         
+
+    def buscarCategoria(self, categoria):
+        conexion=obtenerConexion()
+        cursor=conexion.cursor(dictionary= True)
+        cursor.execute("""Select idCategorias FROM categorias where nombre = %s """,(categoria,))
+        resultado= cursor.fetchone()
+        cursor.close()
+        conexion.close()
+        print(resultado)
+        return resultado
     
+    def agregarProducto(self,producto,idCategoria):
+        conexion=obtenerConexion()
+        cursor=conexion.cursor()
+        cursor.execute("""INSERT INTO productos(idCategorias,nombre,presentacion) VALUES(%s,%s,%s) """,(idCategoria.get("idCategorias"),
+                                                                                                                producto.get("nombre"),
+                                                                                                                producto.get("presentacion"),)
+        )
+        conexion.commit()
+        idProducto = cursor.lastrowid
+        cursor.execute("""INSERT INTO inventario(idTendero,idProductos,cantidad,valorVenta,ValorCompra) VALUES(%s,%s,%s,%s,%s) """,(producto.get("idTendero"),idProducto,0,0,0 ))
+        conexion.commit()
+        cursor.close()
+        conexion.close()
+        
 
 
 
