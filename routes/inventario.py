@@ -10,9 +10,21 @@ def cargar_rutas_inventario(app):
         inventario = Inventario()
         
         try:
-            
-            print(f"DEBUG: Buscando producto en BD: {producto.get('nombre')}")
-            productoInventario = inventario.buscarProducto(producto.get("idTendero"),producto.get("nombre"),producto.get("presentacion"))
+
+            print("DEBUG:Buscanco sinonimos...")
+            sinonimo = inventario.buscarSinonimoProducto(producto)
+
+            if not sinonimo:
+
+                print(f"DEBUG: Buscando producto en BD: {producto.get('nombre')}")
+                productoInventario = inventario.buscarProducto(producto.get("idTendero"),producto.get("nombre"),producto.get("presentacion"))
+            else:
+                
+                producto["nombre"] = sinonimo.get("nombre")
+                producto["presentacion"]= sinonimo.get("presentacion")
+                print(f"DEBUG: Buscando producto en BD: {producto.get('nombre')}")
+                productoInventario = inventario.buscarProducto(producto.get("idTendero"),producto.get("nombre"),producto.get("presentacion"))
+
             
             if not productoInventario:
                 return jsonify({"error": "No se han encontrado coincidencias del producto"}), 404
@@ -118,7 +130,7 @@ def cargar_rutas_inventario(app):
 
         try:
             print(f"{producto.get("idTendero")},{producto.get("nombreProducto")},{producto.get("presentacion")}")
-            print("DEBUG: Verificando si hay productos con el mismo nombre y presentación")
+            print("DEBUG: Verificando si hay productos con el mismo nombre y presentación...")
             productoInventario = inventario.buscarProducto(producto.get("idTendero"),producto.get("nombreProducto"),producto.get("presentacion"))
 
             if not productoInventario:
