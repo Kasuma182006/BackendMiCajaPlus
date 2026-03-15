@@ -119,6 +119,25 @@ class Inventario:
         conexion.commit()
         cursor.close()
         conexion.close()
+
+
+    def obtenerPrecio(self,Producto):
+        conexion = obtenerConexion()
+        cursor = conexion.cursor(dictionary=True)
+        try:
+    
+            cursor.execute( """
+                SELECT valorVenta,cantidad
+                FROM inventario 
+                WHERE idTendero = %s  AND nombreProducto = %s AND presentacion = %s
+            """, (Producto["idTendero"], Producto["nombre"], Producto["presentacion"])), 
+
+        
+            resultado= cursor.fetchone()
+            return resultado 
+        finally:    
+            cursor.close()
+            conexion.close() 
         
 
 

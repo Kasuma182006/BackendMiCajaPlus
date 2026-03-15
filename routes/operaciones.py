@@ -105,4 +105,22 @@ def cargar_rutas_operaciones(app):
         except Exception as e:
             print(f"error: {e}")
             return jsonify({"error interno"}),500
-    
+            
+    @app.route("/cantidadProducto", methods= ["POST"])
+    def cantidadProducto():
+        try:
+            conexion = request.get_json()
+            modelCantidad= Inventario()
+            cantidad = conexion.get('cantidad')
+            resultado = modelCantidad.obtenerPrecio(conexion)
+            precioUnitario = resultado['cantidad']
+            
+            if precioUnitario >= cantidad:
+                return jsonify({"exito": True}),200
+            else:
+                return jsonify({"error": False}),500
+            
+        except Exception as e:
+            return jsonify({"Error": e}),500    
+
+        

@@ -23,7 +23,7 @@ def cargar_rutas_inventario(app):
             
         if not productoInventario: 
             print("No se han encontrado coincidencias")
-            return jsonify({"error" "No se ha encontrado el producto en inventario"}),404
+            return jsonify({"error": "No se ha encontrado el producto en inventario"}),404
         
         
         if (producto.get("operacion") == "descontar"):
@@ -173,7 +173,7 @@ def cargar_rutas_inventario(app):
 
         try : 
             for i in existencia:
-                print(f"el ID del producto es {i.get("idProductos")}")
+                print(f"el ID del producto es {i.get('idProductos')}")
                 existenciaInventario = inventarioTendero.buscarInventario(producto.get("idTendero"),i.get("idProductos"))
                 print(existenciaInventario)
         except Exception as e:
