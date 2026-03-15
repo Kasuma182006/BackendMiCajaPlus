@@ -2,53 +2,50 @@ from conexion import obtenerConexion
 from flask import request, jsonify
 from models.inventario import Inventario
 
-
 def cargar_rutas_inventario(app):
 
     @app.route("/operacionesInventario", methods=["POST"])
-    def operacionesProductos():
+    def operacionesInventario():
         producto = request.get_json()
-        inventarioTendero = Inventario()
+        inventario = Inventario()
         
-        if not producto:
-            return jsonify({"Error": "Datos incompletos "}),400
-        else: 
-            try: 
-                print (producto.get("nombre")+","+producto.get("presentacion"))
-                idProducto = inventarioTendero.buscarProducto( producto.get("nombre"), producto.get("presentacion"))
-                productoInventario = inventarioTendero.buscarInventario(producto.get("idTendero"), idProducto.get("idProductos"))
-            except Exception as e:
-                print(f"error en el servidor ${e}")
-                return jsonify({"error": "error, no se ha encontrado el producto"}),500
+        try:
             
-        if not productoInventario: 
-            print("No se han encontrado coincidencias")
-            return jsonify({"error": "No se ha encontrado el producto en inventario"}),404
-        
-        
-        if (producto.get("operacion") == "descontar"):
+            print(f"DEBUG: Buscando producto en BD: {producto.get('nombre')}")
+            productoInventario = inventario.buscarProducto(producto.get("idTendero"),producto.get("nombre"),producto.get("presentacion"))
+            
+            if not productoInventario:
+                return jsonify({"error": "No se han encontrado coincidencias del producto"}), 404
 
-            if productoInventario["cantidad"] >= producto["cantidad"]:
-                productoInventario["cantidad"] = productoInventario["cantidad"] - producto["cantidad"]
-                try:
-                    inventarioTendero.actualizarProducto(productoInventario)
-                    return jsonify({"succesful": "Productos descontados correctamente"}),200
-                except:
-                    print("error al procesar")
-                    return jsonify ({"Error": "Error en al procesar"}),500
-            else :  
-                print("la cantidad de productos en stock es menor a la cantidad de productos vendidos")
-                return jsonify({"Error": "La cantidad de productos en stok es menor a la cantidad de productos vendidos"},400)
+            
+            operacion = producto.get("operacion")
+            cantidad_solicitada = producto.get("cantidad", 0)
+            cantidad_actual = productoInventario.get("cantidad", 0)
 
-        else: 
-            productoInventario["cantidad"] = productoInventario["cantidad"] + producto["cantidad"]
-            try:
-                inventarioTendero.actualizarProducto(productoInventario)
-                return jsonify({"succesful": "Productos agregados correctamente"}),200
-            except:
-                print("error al intentar agregar productos")
-                return jsonify ({"Error": "Error en al intentar agregar productos"}),500
-        
+            if operacion == "descontar":
+                if cantidad_actual < cantidad_solicitada:
+                    return jsonify({"error": "Stock insuficiente para vender"}), 400
+                
+                productoInventario["cantidad"] = cantidad_actual - cantidad_solicitada
+                mensaje_success = "Se han descontado los productos con éxito"
+                
+            else: 
+                productoInventario["cantidad"] = cantidad_actual + cantidad_solicitada
+                productoInventario["valorCompra"] = producto.get("valorCompra")
+                mensaje_success = "Se han agregado las unidades correctamente"
+
+            
+            print(f"DEBUG: Intentando actualizar BD con nueva cantidad: {productoInventario['cantidad']}")
+            inventario.actualizarUnidades(productoInventario,producto.get("operacion"))
+            
+            
+            return jsonify({"status": "success", "message": mensaje_success}), 200
+
+        except Exception as e:
+            
+            print(f"!!! ERROR CRÍTICO en operacionesInventario: {e}")
+            return jsonify({"error": "Error interno al procesar la operación", "detalle": str(e)}), 500
+
 
 
     @app.route("/buscarProductos", methods = ["POST"])
@@ -60,145 +57,97 @@ def cargar_rutas_inventario(app):
             print(busqueda.get("nombre"))
             listaProductos =  inventarioTendero.buscarProductosSimilares(busqueda.get("nombre"))
         except Exception as e:
-            print(e)
-            return jsonify({"error": "error con el servidor"})
             
-        
-        if not listaProductos:
-            return jsonify({"error": "No se han encontrado coincidencias en los productos"})
-        
-        print(f"lista de productos ${listaProductos}")
-        
-        for i in listaProductos:
-            
-            try:
-                print(i.get("idProductos"),busqueda.get("idTendero"))
-                producto = (inventarioTendero.productosInventario(i.get("idProductos"),busqueda.get("idTendero")))
-                print(f"el producto es ${producto}")
-            except Exception as e:
-                print(e)
-                return jsonify({"error":"error al consultar en la base de datos"})
-            if not producto:
-                print(f"el producto {i} no está en inventario")
-                producto = ""
-            else: 
-                listaInventario.append(producto)
-                producto = ""
-        
-        print(f" hay ${listaInventario} productos en inventario" )
-        
-        if not listaInventario: 
-            return jsonify({"error": "El producto no se encuentra en su inventario"})
-        
-        else: 
-            return jsonify (listaInventario)
+            print(f"!!! ERROR CRÍTICO en operacionesInventario: {e}")
+            return jsonify({"error": "Error interno al procesar la operación", "detalle": str(e)}), 500
 
-    @app.route("/editarProducto", methods = ["POST"])
-    def editarProductos():
-        producto = request.get_json()
-        actualizarInventario = Inventario()
 
+    @app.route("/categorias",methods =["GET"] )
+    def categorias():
+        inventario= Inventario()
+        try:
+            print("Obteniendo categorias..")
+            categorias = inventario.categorias()
+        except Exception as e:
+            print(f"Error en la consulta {e}")
+            return jsonify({"Error": f"Se ha presentado un error en el servidor {e}"}),500
+        return jsonify(categorias)
+
+
+    @app.route("/catalogo", methods = ["GET"])
+    def catalogo():
+        inventario = Inventario()
         try: 
-            inventarioProducto = actualizarInventario.buscarProductos(producto.get("nombre"),producto.get("presentacion"))
-            print(f"Productos {inventarioProducto}")
+            print("Obteniendo catalago...")
+            listaCatalogos = inventario.catalogo()
         except Exception as e:
             print(e)
-            return 500
-
-        if not inventarioProducto:
-            try:
-                actualizarInventario.editarInventario(producto)
-                return 200
-            except Exception as e:
-                print(e)
-                return 500
+            return jsonify({"Error": "Ha ocurrido un error al buscar el catalogo"}), 500
         
-        for i in inventarioProducto:
-            try:
-                inventarioTendero = actualizarInventario.buscarInventario(i.get("idTendero"),i.get("idProductos"))
-                print(inventarioTendero)
-            except Exception as e:
-                print(e)
-                return 500
+        return jsonify(listaCatalogos) 
 
 
-        if not inventarioTendero:
-            try: 
-                actualizarInventario.editarInventario(producto)
-                return jsonify({"succesful": "El Prodcuto se ha actualizado con éxito"})
-            
-            except Exception as e:
-                print(e)
-                return jsonify({"error": "Parece que ha habido un error al editar en la base de datos"})
+    @app.route("/agregarProducto", methods = ["POST"])
+    def agregarProducto():
+
+        productoNuevo = request.get_json()
+        inventario = Inventario()
+        print(productoNuevo)
+        try:
+            verificación = inventario.buscarProducto(productoNuevo.get("idTendero"),productoNuevo.get("nombre"),productoNuevo.get("presentacion"))
+            if not verificación:
+                    print("DEBUG: Agregando productos : INSERT EN 1 TABLA") 
+                    inventario.agregarProducto(productoNuevo)
+                    
+                    if productoNuevo.get("operacion") == 1: #1 significa que el tendero creo un producto sin elegir en el catalogo por lo tanto se inserta en la tabla del catalogo
+                        print("DEBUG: agregando producto: INSERT EN 2 TABLAS")
+                        inventario.agregarCatalogo(productoNuevo)
+            else: 
+                return jsonify({"Error": "El producto ya ha sido creado, elige un nombre o una presentación diferente"}),500
+
+        except Exception as e:
+                print(f"ERROR EN EL SERVIDOR, detalle : {e}")
+                return jsonify({"Error": f"Ha ocurrido un error en el servidor: {e}"}), 500  
         
-        else: 
+        return jsonify({"succesful":"El producto se ha creado con éxito"}),200
 
-            return 409 #Codigo de error para cosas ya credas y que generan algun conflicto
-            
+
+    @app.route("/sugerirProductos",methods = ["POST"])
+    def sugerirProductos():
+        inventario = Inventario()
+        productos = request.get_json()
+        try:
+            print("DEBUG: buscando Productos...")
+            listaProductos = inventario.sugerirProductos(productos)
+        except Exception as e:
+            print(f"Ha ocurrido un error Crítico en el servidor {e}")
+            return jsonify({"Error": f"Ha ocurrido un error Crítico en el servidor {e}"}),500
+
+        return jsonify(listaProductos) 
     
-    @app.route("/agregarProducto",methods = ["POST"])
-    def agregarProductos():
+
+    @app.route("/editarProducto",methods= ["POST"])
+    def editarProducto():
         producto = request.get_json()
-        inventarioTendero = Inventario()
+        inventario = Inventario()
 
         try:
-            print( producto.get("categoria"))
-            idCateogria = inventarioTendero.buscarCategoria(producto.get("categoria"))
-                
+            print(f"{producto.get("idTendero")},{producto.get("nombreProducto")},{producto.get("presentacion")}")
+            print("DEBUG: Verificando si hay productos con el mismo nombre y presentación")
+            productoInventario = inventario.buscarProducto(producto.get("idTendero"),producto.get("nombreProducto"),producto.get("presentacion"))
+
+            if not productoInventario:
+                print("DEBUG: Editando Producto...")
+                inventario.editarProducto(producto)
+            else:
+                if productoInventario.get("idInventario") == producto.get("idInventario"):
+                    print("DEBUG: Editando Producto ...")
+                    inventario.editarProducto(producto)
+                else:
+                    return jsonify({"Error": "Error al editar, ya tienes un producto con el mismo nombre y presentación"}),409
+
         except Exception as e:
-            print(e)
-            return jsonify ({"error": "Ha habido un error al consultar la categoria"})
-        
-        if not idCateogria :
-            return jsonify({"error":"La categoria no existe"})
+            print(f"Error en consulta, {e}")
+            return jsonify({"error":f"Error en la base de datos, {e}"}),500        
 
-        try: 
-            print(producto.get("nombre"), producto.get("presentacion"))
-            existencia = inventarioTendero.buscarProductos(producto.get("nombre"), producto.get("presentacion"))
-            print(f"producto {existencia}")
-
-        except Exception as e:
-            print(e)
-            return jsonify({"error": "Ha ocurrido un error al consultar la existencia del producto"})    
-
-        if not existencia:
-            try:
-
-                inventarioTendero.agregarProducto(producto,idCateogria)
-                return jsonify ({"succesful": "el producto se ha agregado correctamente"})
-
-            except Exception as e:
-                print(e)
-                return jsonify({"error": "ha ocurrido un error al agregar el producto"})
-
-        try : 
-            for i in existencia:
-                print(f"el ID del producto es {i.get('idProductos')}")
-                existenciaInventario = inventarioTendero.buscarInventario(producto.get("idTendero"),i.get("idProductos"))
-                print(existenciaInventario)
-        except Exception as e:
-            print(e)
-            return jsonify({"error": "Ha ocurrido un error al buscar el producto en inventario"})
-        
-        if not existenciaInventario:
-
-            inventarioTendero.agregarProducto(producto,idCateogria)
-            return jsonify ({"succesful": "el producto se ha agregado correctamente"})
-        else:
-
-            return jsonify({"error": "El produco ya existe en su inventario, por favor agregue otro producto"})
-        
-
-
-
-
-
-
-   
-
-
-
-
-                
-                
-        
+        return jsonify({"Succesful": "El producto se ha editado con éxito"}),200

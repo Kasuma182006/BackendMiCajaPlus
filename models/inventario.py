@@ -1,125 +1,67 @@
 from conexion import obtenerConexion
 
-class Inventario:
+class Inventario():
+    def buscarProducto(self,idTendero,nombre,presentacion):
 
-    def buscarProducto(self,nombre,presentacion):
-        conexion=obtenerConexion()
-        cursor=conexion.cursor(dictionary= True)
-        cursor.execute("""Select idProductos FROM productos where nombre = %s AND presentacion = %s""",(nombre,presentacion))
-        resultado= cursor.fetchone()
-        cursor.close()
-        conexion.close()
-        print(resultado)
-        return resultado
-
-    def buscarInventario(self,idTendero,idProducto):
         conexion=obtenerConexion()
         cursor=conexion.cursor(dictionary=True)
-        cursor.execute("""Select idInventario, cantidad From inventario where idTendero = %s AND idProductos = %s""", (idTendero,idProducto) )
-        resultado= cursor.fetchone()
+        cursor.execute("""SELECT idInventario, cantidad,valorCompra FROM inventario WHERE idTendero = %s AND nombreProducto = %s AND presentacion = %s """,(idTendero,nombre,presentacion))
+        resultado=cursor.fetchone()
         cursor.close()
         conexion.close()
-        print(resultado)
+        print(f"resultado de busquda = {resultado}")
         return resultado
-        
     
-
-    def actualizarProducto(self, producto):
+    def actualizarUnidades(self,producto,operacion):
         conexion=obtenerConexion()
         cursor=conexion.cursor()
-        cursor.execute("""UPDATE inventario SET cantidad = %s where idInventario = %s""",(producto["cantidad"], producto["idInventario"]) )
+        print(operacion)
+        if operacion == "descontar":
+            cursor.execute("""UPDATE inventario SET cantidad = %s where idInventario = %s """, (producto.get("cantidad"),producto.get("idInventario")))
+        else:
+            print(producto.get("valorCompra"))
+            cursor.execute("""UPDATE inventario SET cantidad = %s, valorCompra = %s where idInventario = %s """, (producto.get("cantidad"),producto.get("valorCompra"),producto.get("idInventario")))
         conexion.commit()
         cursor.close()
         conexion.close()
     
-
-    def buscarProductosSimilares(self,nombre):
-        conexion=obtenerConexion()
-        cursor=conexion.cursor(dictionary= True)
-        patron = f"%{nombre}%"
-        cursor.execute("""Select idProductos FROM productos where nombre like %s """,(patron,))
-        resultado= cursor.fetchall()
-        cursor.close()
-        conexion.close()
-        print(resultado)
-        return resultado
-    
-    def buscarProductos(self,nombre,presentacion):
-        conexion=obtenerConexion()
-        cursor=conexion.cursor(dictionary= True)
-        cursor.execute("""Select idProductos FROM productos where nombre = %s and presentacion = %s """,(nombre,presentacion,))
-        resultado= cursor.fetchall()
-        cursor.close()
-        conexion.close()
-        print(resultado)
-        return resultado
-
-
-    def productosInventario(self,idProducto,idTendero):
+    def catalogo(self):
         conexion=obtenerConexion()
         cursor=conexion.cursor(dictionary=True)
-        cursor.execute("""Select inventario.idInventario,productos.idProductos, inventario.cantidad, inventario.valorVenta, productos.nombre, productos.presentacion From inventario INNER JOIN productos on inventario.idProductos = productos.idProductos where inventario.idTendero = %s AND inventario.idProductos =%s """, (idTendero,idProducto))
-        resultado= cursor.fetchone()
+        cursor.execute("Select idCategorias, nombre, presentacion from productos")
+        resultado=cursor.fetchall()
         cursor.close()
         conexion.close()
-        print(f" en el inventario hay ${resultado}")
-        return resultado
-
-    
-    def editarInventario(self,producto):
-        conexion=obtenerConexion()
-        cursor=conexion.cursor()
-        cursor.execute("""UPDATE inventario SET cantidad = %s, valorVenta = %s where idInventario = %s""",(producto["cantidad"],producto["valorVenta"],producto["idInventario"],) )
-        conexion.commit()
-        cursor.execute("""UPDATE productos SET nombre = %s, presentacion = %s  where idProductos = %s""",( producto["nombre"],producto["presentacion"], producto["idProductos"],))
-        conexion.commit()
-        cursor.close()
-        conexion.close()
-
-    def obtenerPrecio(self,Producto):
-        conexion = obtenerConexion()
-        cursor = conexion.cursor(dictionary=True)
-        try:
-    
-            cursor.execute( """
-                SELECT i.valorVenta, p.nombre, i.cantidad
-                FROM inventario i
-                INNER JOIN productos p ON i.idProductos = p.idProductos 
-                WHERE i.idTendero = %s AND p.nombre = %s
-            """, (Producto["idTendero"], Producto["nombre"]))
-
-        
-            resultado= cursor.fetchone()
-            return resultado 
-        finally:    
-            cursor.close()
-            conexion.close()
-        
-
-    def buscarCategoria(self, categoria):
-        conexion=obtenerConexion()
-        cursor=conexion.cursor(dictionary= True)
-        cursor.execute("""Select idCategorias FROM categorias where nombre = %s """,(categoria,))
-        resultado= cursor.fetchone()
-        cursor.close()
-        conexion.close()
-        print(resultado)
+        print(f"resultado de busquda = {resultado}")
         return resultado
     
-    def agregarProducto(self,producto,idCategoria):
+    def categorias(self):
+        conexion=obtenerConexion()
+        cursor=conexion.cursor(dictionary=True)
+        cursor.execute("Select idCategorias, nombre from categorias")
+        resultado=cursor.fetchall()
+        cursor.close()
+        conexion.close()
+        print(f"resultado de busquda = {resultado}")
+        return resultado                                              
+
+    def agregarProducto(self,producto):
         conexion=obtenerConexion()
         cursor=conexion.cursor()
-        cursor.execute("""INSERT INTO productos(idCategorias,nombre,presentacion) VALUES(%s,%s,%s) """,(idCategoria.get("idCategorias"),
-                                                                                                                producto.get("nombre"),
-                                                                                                                producto.get("presentacion"),)
-        )
-        conexion.commit()
-        idProducto = cursor.lastrowid
-        cursor.execute("""INSERT INTO inventario(idTendero,idProductos,cantidad,valorVenta,ValorCompra) VALUES(%s,%s,%s,%s,%s) """,(producto.get("idTendero"),idProducto,0,0,0 ))
+        cursor.execute("""INSERT INTO inventario(idTendero,cantidad,valorVenta,valorCompra,nombreProducto,presentacion,nombreCategoria) VALUES(%s,%s,%s,%s,%s,%s,%s)""",(producto.get("idTendero"),producto.get("cantidad"),producto.get("valorVenta"),producto.get("valorCompra"),producto.get("nombre"),producto.get("presentacion"),producto.get("idCategoria")))
         conexion.commit()
         cursor.close()
         conexion.close()
 
+
+    def agregarCatalogo(self,catalogo):
+
+        conexion=obtenerConexion()
+        cursor=conexion.cursor()
+        cursor.execute("""INSERT INTO productos(nombre,presentacion,idCategorias) VALUES(%s,%s,%s)""",(catalogo.get("nombre"), catalogo.get("presentacion"),catalogo.get("idCategoria")))
+        conexion.commit()
+        cursor.close()
+        conexion.close()
 
     def obtenerPrecio(self,Producto):
         conexion = obtenerConexion()
@@ -137,7 +79,28 @@ class Inventario:
             return resultado 
         finally:    
             cursor.close()
-            conexion.close() 
+            conexion.close()
+        
+
+    def buscarCategoria(self, categoria):
+        conexion=obtenerConexion()
+        cursor=conexion.cursor(dictionary=True)
+        nombre = f"%{categoria.get("nombre")}%"
+        cursor.execute("""Select idInventario,nombreProducto,presentacion,cantidad,valorVenta,valorCompra from inventario where idTendero = %s AND nombreProducto LIKE %s""",(producto.get("idTendero"),nombre))
+        resultado=cursor.fetchall()
+        cursor.close()
+        conexion.close()
+        print(f"resultado de busquda = {resultado}")
+        return resultado
+
+
+    def editarProducto(self,producto):
+        conexion=obtenerConexion()
+        cursor=conexion.cursor()
+        cursor.execute("""UPDATE inventario SET cantidad = %s,valorVenta = %s ,valorCompra = %s ,nombreProducto = %s ,presentacion = %s ,nombreCategoria = %s WHERE idInventario = %s""" ,(producto.get("cantidad"),producto.get("valorVenta"),producto.get("valorCompra"),producto.get("nombreProducto"),producto.get("presentacion"),producto.get("nombreCategoria"),producto.get("idInventario")))
+        conexion.commit()
+        cursor.close()
+        conexion.close()
         
 
 
