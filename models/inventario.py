@@ -85,7 +85,7 @@ class Inventario():
     def buscarCategoria(self, categoria):
         conexion=obtenerConexion()
         cursor=conexion.cursor(dictionary=True)
-        nombre = f"%{categoria.get("nombre")}%"
+        nombre = f"%{categoria.get('nombre')}%"
         cursor.execute("""Select idInventario,nombreProducto,presentacion,cantidad,valorVenta,valorCompra from inventario where idTendero = %s AND nombreProducto LIKE %s""",(producto.get("idTendero"),nombre))
         resultado=cursor.fetchall()
         cursor.close()
@@ -101,6 +101,25 @@ class Inventario():
         conexion.commit()
         cursor.close()
         conexion.close()
+
+
+    def obtenerPrecio(self,Producto):
+        conexion = obtenerConexion()
+        cursor = conexion.cursor(dictionary=True)
+        try:
+    
+            cursor.execute( """
+                SELECT valorVenta,cantidad
+                FROM inventario 
+                WHERE idTendero = %s  AND nombreProducto = %s AND presentacion = %s
+            """, (Producto["idTendero"], Producto["nombre"], Producto["presentacion"])), 
+
+        
+            resultado= cursor.fetchone()
+            return resultado 
+        finally:    
+            cursor.close()
+            conexion.close()    
         
 
 

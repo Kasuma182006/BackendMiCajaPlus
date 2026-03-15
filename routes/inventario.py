@@ -86,7 +86,6 @@ def cargar_rutas_inventario(app):
         
         return jsonify(listaCatalogos) 
 
-
     @app.route("/agregarProducto", methods = ["POST"])
     def agregarProducto():
 
@@ -132,7 +131,7 @@ def cargar_rutas_inventario(app):
         inventario = Inventario()
 
         try:
-            print(f"{producto.get("idTendero")},{producto.get("nombreProducto")},{producto.get("presentacion")}")
+            print(f"{producto.get('idTendero')},{producto.get('nombreProducto')},{producto.get('presentacion')}")
             print("DEBUG: Verificando si hay productos con el mismo nombre y presentación")
             productoInventario = inventario.buscarProducto(producto.get("idTendero"),producto.get("nombreProducto"),producto.get("presentacion"))
 
