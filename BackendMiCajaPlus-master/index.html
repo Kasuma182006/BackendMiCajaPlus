@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Caja Plus</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #00c6ff;
+            --secondary: #0066ff;
+            --bg: #050a1a;
+            --glass: rgba(255,255,255,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: white;
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: radial-gradient(circle at 50% 20%, #007bff33, transparent);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            text-shadow: 0 0 15px #00c6ffdd;
+        }
+
+        .hero p {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            opacity: 0.85;
+            max-width: 600px;
+        }
+
+        .btn {
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px #0099ffaa;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 0 25px #00bbffaa;
+        }
+
+        footer {
+            padding: 2rem;
+            text-align: center;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="hero">
+        <h1>Mi Caja Plus</h1>
+        <p>
+            Plataforma avanzada para la gestión financiera, control de caja, 
+            movimientos monetarios, reportes y automatización inteligente para empresas modernas.
+        </p>
+
+        <a href="http://54.156.114.70:65017/micaja.com" class="btn" target="_blank">
+            Entrar al Sistema
+        </a>
+    </section>
+
+    <footer>
+        © 2025 Mi Caja Plus — Gestión Financiera Avanzada.
+    </footer>
+
+</body>
+</html>
