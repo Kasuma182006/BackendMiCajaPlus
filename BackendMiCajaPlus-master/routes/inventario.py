@@ -1,18 +1,31 @@
 from conexion import obtenerConexion
 from flask import request, jsonify
 from models.inventario import Inventario
-
+import re
 def cargar_rutas_inventario(app):
 
     @app.route("/operacionesInventario", methods=["POST"])
     def operacionesInventario():
         producto = request.get_json()
         inventario = Inventario()
+        producto = limpiar_objeto_json(producto)
         
         try:
-            
-            print(f"DEBUG: Buscando producto en BD: {producto.get('nombre')}")
-            productoInventario = inventario.buscarProducto(producto.get("idTendero"),producto.get("nombre"),producto.get("presentacion"))
+
+            print("DEBUG:Buscanco sinonimos...")
+            sinonimo = inventario.buscarSinonimoProducto(producto)
+
+            if not sinonimo:
+
+                print(f"DEBUG: Buscando producto en BD: {producto.get('nombre')}")
+                productoInventario = inventario.buscarProducto(producto.get("idTendero"),producto.get("nombre"),producto.get("presentacion"))
+            else:
+                
+                producto["nombre"] = sinonimo.get("nombre")
+                producto["presentacion"]= sinonimo.get("presentacion")
+                print(f"DEBUG: Buscando producto en BD: {producto.get('nombre')}")
+                productoInventario = inventario.buscarProducto(producto.get("idTendero"),producto.get("nombre"),producto.get("presentacion"))
+
             
             if not productoInventario:
                 return jsonify({"error": "No se han encontrado coincidencias del producto"}), 404
@@ -76,6 +89,7 @@ def cargar_rutas_inventario(app):
     def agregarProducto():
 
         productoNuevo = request.get_json()
+        productoNuevo = limpiar_objeto_json(productoNuevo)
         inventario = Inventario()
         print(productoNuevo)
         try:
@@ -101,6 +115,7 @@ def cargar_rutas_inventario(app):
     def sugerirProductos():
         inventario = Inventario()
         productos = request.get_json()
+        productos = limpiar_objeto_json(productos)
         try:
             print("DEBUG: buscando Productos...")
             listaProductos = inventario.sugerirProductos(productos)
@@ -114,11 +129,12 @@ def cargar_rutas_inventario(app):
     @app.route("/editarProducto",methods= ["POST"])
     def editarProducto():
         producto = request.get_json()
+        producto = limpiar_objeto_json(producto)
         inventario = Inventario()
 
         try:
             print(f"{producto.get("idTendero")},{producto.get("nombreProducto")},{producto.get("presentacion")}")
-            print("DEBUG: Verificando si hay productos con el mismo nombre y presentación")
+            print("DEBUG: Verificando si hay productos con el mismo nombre y presentación...")
             productoInventario = inventario.buscarProducto(producto.get("idTendero"),producto.get("nombreProducto"),producto.get("presentacion"))
 
             if not productoInventario:
@@ -136,3 +152,26 @@ def cargar_rutas_inventario(app):
             return jsonify({"error":f"Error en la base de datos, {e}"}),500        
 
         return jsonify({"Succesful": "El producto se ha editado con éxito"}),200
+    
+
+
+def limpiar_objeto_json(data):
+    
+    patron = r'[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]'
+    
+    
+    objeto_limpio = {}
+    
+    for llave, valor in data.items():
+        
+        if isinstance(valor, str):
+            
+            valor_limpio = re.sub(patron, '', valor)
+            
+            valor_limpio = " ".join(valor_limpio.split())
+            objeto_limpio[llave] = valor_limpio
+        else:
+            
+            objeto_limpio[llave] = valor
+            
+    return objeto_limpio
