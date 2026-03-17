@@ -16,7 +16,7 @@ class Inventario():
 
         conexion=obtenerConexion()
         cursor=conexion.cursor(dictionary=True)
-        cursor.execute("""SELECT idInventario, cantidad,valorCompra FROM inventario WHERE idTendero = %s AND nombreProducto = %s AND presentacion = %s """,(idTendero,nombre,presentacion))
+        cursor.execute("""SELECT idInventario, cantidad,valorVenta, valorCompra FROM inventario WHERE idTendero = %s AND nombreProducto = %s AND presentacion = %s """,(idTendero,nombre,presentacion))
         resultado=cursor.fetchone()
         cursor.close()
         conexion.close()
