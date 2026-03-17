@@ -15,6 +15,18 @@ class Creditos:
     conexion.close()
     return resultado
    
+
+   def aumentar_saldo(self, data, id_cliente):
+      conexion=obtenerConexion()
+      valor = data["valor"]
+      cedulaTendero = data["idTendero"]
+      print(valor)
+      cursor=conexion.cursor()
+      sql = """UPDATE cliente SET saldo = saldo + %s WHERE idCliente = %s AND idTendero = %s;"""
+      cursor.execute(sql,(valor,id_cliente,cedulaTendero,))
+      conexion.commit()
+      return True
+   
    
    
 

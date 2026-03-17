@@ -27,50 +27,50 @@ def cargar_rutas_clientes(app):
             return jsonify({"mensaje": "exito"}), 200
         return jsonify({"mensaje": "error"}), 400
     
-    @app.route("/registrar_venta", methods = ['POST'])
-    def registrar_venta():
-        try:
-            conexion = obtenerConexion()
-            cursor = conexion.cursor(dictionary=True)
-            data = request.get_json()
-            nombre = data['nombreProducto']
-            presentacion = data['presentacion']
-            cantidad = data['cantidad']
-            cedulaTendero = data['idTendero']
-            cedulaCliente = data['idcliente']
+    # @app.route("/registrar_venta", methods = ['POST'])
+    # def registrar_venta():
+    #     try:
+    #         conexion = obtenerConexion()
+    #         cursor = conexion.cursor(dictionary=True)
+    #         data = request.get_json()
+    #         nombre = data['nombreProducto']
+    #         presentacion = data['presentacion']
+    #         cantidad = data['cantidad']
+    #         cedulaTendero = data['idTendero']
+    #         cedulaCliente = data['idcliente']
           
-            print(data)
-            sql = """SELECT p.idProductos, i.valorVenta FROM diccionarioproductos d JOIN productos p ON d.idProductos = p.idProductos JOIN inventario i ON p.idProductos = i.idProductos WHERE d.sinonimo = %s AND p.presentacion = %s AND i.cantidad >= %s;"""
-            cursor.execute(sql,(nombre,presentacion, cantidad,))
-            resultado = cursor.fetchone()
-            print(resultado)
-            if resultado:
-                    productos = resultado["idProductos"]
-                    sql = """UPDATE inventario SET cantidad = cantidad - %s WHERE idProductos = %s AND idTendero = %s;"""
-                    cursor.execute(sql,(cantidad,productos,cedulaTendero,))
-                    conexion.commit()
-                    mensaje = nombre + presentacion + str(cantidad)
-                    valor = resultado["valorVenta"] * cantidad
-                    sql ="""INSERT INTO ventas (idTendero, mensaje, tipoPago, valor) VALUES (%s, %s, %s, %s);"""
-                    cursor.execute(sql,(cedulaTendero,mensaje,"credito",valor,))
-                    conexion.commit()
-                    idVenta = cursor.lastrowid
-                    print(data)
-                    sql = """SELECT idCliente FROM cliente WHERE cedula = %s AND idTendero = %s"""
-                    cursor.execute(sql,(cedulaCliente,cedulaTendero))
-                    resultado_id = cursor.fetchone()
-                    id_Cliente = resultado_id["idCliente"]
-                    sql = """INSERT INTO creditos (idVentas,idCliente) VALUES(%s,%s)"""
-                    cursor.execute(sql,(idVenta,id_Cliente))
-                    conexion.commit()
-                    sql = """UPDATE cliente SET saldo = saldo + %s WHERE idCliente = %s AND idTendero = %s;"""
-                    cursor.execute(sql,(valor,id_Cliente,cedulaTendero,))
-                    conexion.commit()
-                    return jsonify("resultado")
-            else:
-                 return jsonify("sinResultado")
-        except Exception as e:
-                    return jsonify("error")
+    #         print(data)
+    #         sql = """SELECT p.idProductos, i.valorVenta FROM diccionarioproductos d JOIN productos p ON d.idProductos = p.idProductos JOIN inventario i ON p.idProductos = i.idProductos WHERE d.sinonimo = %s AND p.presentacion = %s AND i.cantidad >= %s;"""
+    #         cursor.execute(sql,(nombre,presentacion, cantidad,))
+    #         resultado = cursor.fetchone()
+    #         print(resultado)
+    #         if resultado:
+    #                 productos = resultado["idProductos"]
+    #                 sql = """UPDATE inventario SET cantidad = cantidad - %s WHERE idProductos = %s AND idTendero = %s;"""
+    #                 cursor.execute(sql,(cantidad,productos,cedulaTendero,))
+    #                 conexion.commit()
+    #                 mensaje = nombre + presentacion + str(cantidad)
+    #                 valor = resultado["valorVenta"] * cantidad
+    #                 sql ="""INSERT INTO ventas (idTendero, mensaje, tipoPago, valor) VALUES (%s, %s, %s, %s);"""
+    #                 cursor.execute(sql,(cedulaTendero,mensaje,"credito",valor,))
+    #                 conexion.commit()
+    #                 idVenta = cursor.lastrowid
+    #                 print(data)
+    #                 sql = """SELECT idCliente FROM cliente WHERE cedula = %s AND idTendero = %s"""
+    #                 cursor.execute(sql,(cedulaCliente,cedulaTendero))
+    #                 resultado_id = cursor.fetchone()
+    #                 id_Cliente = resultado_id["idCliente"]
+    #                 sql = """INSERT INTO creditos (idVentas,idCliente) VALUES(%s,%s)"""
+    #                 cursor.execute(sql,(idVenta,id_Cliente))
+    #                 conexion.commit()
+    #                 sql = """UPDATE cliente SET saldo = saldo + %s WHERE idCliente = %s AND idTendero = %s;"""
+    #                 cursor.execute(sql,(valor,id_Cliente,cedulaTendero,))
+    #                 conexion.commit()
+    #                 return jsonify("resultado")
+    #         else:
+    #              return jsonify("sinResultado")
+    #     except Exception as e:
+    #                 return jsonify("error")
         
     @app.route("/buscar_cliente", methods =['POST'])
     def buscar():

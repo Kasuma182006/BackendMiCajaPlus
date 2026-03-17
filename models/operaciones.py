@@ -9,6 +9,7 @@ class Operaciones:
                    (data_venta['idTendero'],data_venta['mensaje'],data_venta['tipoPago'],data_venta['valor']))
     conexion.commit()
     resultado=cursor.lastrowid
+    print(f"lawstroid: {resultado}")
     cursor.close()
     conexion.close()
     return resultado

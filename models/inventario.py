@@ -5,7 +5,7 @@ class Inventario():
     def buscarSinonimoProducto(self,producto):
         conexion=obtenerConexion()
         cursor=conexion.cursor(dictionary=True)
-        cursor.execute("""SELECT productos.nombre, productos.presentacion FROM productos INNER JOIN diccionarioproductos ON productos.idProductos = diccionarioproductos.idProductos WHERE diccionarioproductos.sinonimo = %s """,(producto.get("nombre"),))
+        cursor.execute("""SELECT productos.nombre FROM productos INNER JOIN diccionarioproductos ON productos.idProductos = diccionarioproductos.idProductos WHERE diccionarioproductos.sinonimo = %s """,(producto.get("nombre"),))
         resultado=cursor.fetchone()
         cursor.close()
         conexion.close()
@@ -13,10 +13,10 @@ class Inventario():
         return resultado
 
     def buscarProducto(self,idTendero,nombre,presentacion):
-
+        print(f"buscarProducto: {nombre} y {presentacion} y {idTendero}")
         conexion=obtenerConexion()
         cursor=conexion.cursor(dictionary=True)
-        cursor.execute("""SELECT idInventario, cantidad,valorCompra FROM inventario WHERE idTendero = %s AND nombreProducto = %s AND presentacion = %s """,(idTendero,nombre,presentacion))
+        cursor.execute("""SELECT idInventario, cantidad, valorVenta, valorCompra FROM inventario WHERE idTendero = %s AND nombreProducto = %s AND presentacion = %s """,(idTendero,nombre,presentacion))
         resultado=cursor.fetchone()
         cursor.close()
         conexion.close()
@@ -64,6 +64,9 @@ class Inventario():
         cursor.close()
         conexion.close()
 
+    
+
+
 
     def agregarCatalogo(self,catalogo):
 
@@ -97,7 +100,7 @@ class Inventario():
         conexion=obtenerConexion()
         cursor=conexion.cursor(dictionary=True)
         nombre = f"%{categoria.get('nombre')}%"
-        cursor.execute("""Select idInventario,nombreProducto,presentacion,cantidad,valorVenta,valorCompra from inventario where idTendero = %s AND nombreProducto LIKE %s""",(producto.get("idTendero"),nombre))
+        cursor.execute("""Select idInventario,nombreProducto,presentacion,cantidad,valorVenta,valorCompra from inventario where idTendero = %s AND nombreProducto LIKE %s""",(categoria.get("idTendero"),nombre))
         resultado=cursor.fetchall()
         cursor.close()
         conexion.close()

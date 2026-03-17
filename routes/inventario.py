@@ -1,6 +1,9 @@
 from conexion import obtenerConexion
 from flask import request, jsonify
 from models.inventario import Inventario
+from models.operaciones import Operaciones
+from models.creditos import Creditos
+from models.clientes import Clientes
 
 def cargar_rutas_inventario(app):
 
@@ -58,7 +61,53 @@ def cargar_rutas_inventario(app):
             print(f"!!! ERROR CRÍTICO en operacionesInventario: {e}")
             return jsonify({"error": "Error interno al procesar la operación", "detalle": str(e)}), 500
 
+    @app.route("/registrar_credito", methods = ['POST'])
+    def registrar_credito():
+        try:
+            data = request.get_json()
+            print(data)
+            nombre = data['nombre']
+            presentacion = data['presentacion']
+            cantidad = data['cantidad']
+            cedulaTendero = data['idTendero']
+            cedulaCliente = data['cedula']
+            mensaje = data["mensaje"]
+            inventario = Inventario()
+            sinonimo = inventario.buscarSinonimoProducto(data)
+            if sinonimo :
+                nombre = sinonimo["nombre"]
+            producto_inventario = inventario.buscarProducto(cedulaTendero,nombre,presentacion)
 
+            if producto_inventario:
+                cantidad_stock = producto_inventario["cantidad"]
+                if cantidad > cantidad_stock:
+                    return jsonify("La cantidad de venta es mayor a la cantidad en stock. Por favor actualice el inventario.")
+                else:
+                    cantidad_total = cantidad_stock - cantidad
+                    producto = {"cantidad": cantidad_total, "idInventario": producto_inventario["idInventario"]}
+                    inventario.actualizarUnidades(producto, "descontar")
+                    data["valor"] = producto_inventario["valorVenta"] * cantidad   
+                    operacion = Operaciones()
+                    venta = operacion.insertar_venta(data)
+                    if venta:
+                        creditoModel= Creditos()
+                        cliente = Clientes()
+                        resultado_cliente = cliente.ConsultarClientes(data)
+                        idCliente = int(resultado_cliente["idCliente"])
+                        creditoModel.insertar_credito(venta, idCliente)
+                        saldo = creditoModel.aumentar_saldo(data,idCliente)
+                        if saldo == True:
+                            return jsonify("La venta a crédito ha sido registrado con éxito. ¿Algo más? para finalizar di fin.")
+                        else:
+                            return jsonify("Ha ocurrido un error. Intentelo de nuevo.")
+                    else:
+                        return jsonify("Ha ocurrido un error a la hora de registrar la venta por favor intentelo de nuevo.")
+            else:
+                return jsonify("El producto no esta registrado. Por favor agregalo al inventario. Para finalizar el crédito di fin.")
+        except Exception as e:
+                    print(f"Error detectado: {e}")
+                    return jsonify({"Error interno": e})
+                        
 
     @app.route("/buscarProductos", methods = ["POST"])
     def buscarProductos():
