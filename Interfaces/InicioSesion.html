@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    <link rel="stylesheet" href="/Interfaces/CodigosMiCaja/FormatoIniciarSesion.css">
+</head>
+<body>
+    <main id="ppal">
+        <form action="" id="forma_acceso">
+                <section id="cont_logo">
+                    <figure id="logo">
+                        <img src="/Interfaces/ComponentesMiCaja/LogoMiCajaPlus.png" alt="logo micajaplus">
+                    </figure>
+
+                    <h2 id="nombre_logo">MiCaja+</h2>
+                </section>
+            <div class="cont-campos">
+                <label for="cedula">Cédula</label>
+                <?xml version="1.0" encoding="iso-8859-1"?>
+                    <svg fill="#000000" height="800px" width="800px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                        viewBox="0 0 260.666 260.666" xml:space="preserve">
+                        <g>
+                            <path d="M236.666,40.882H24c-13.233,0-24,10.767-24,24v130.902c0,13.233,10.767,24,24,24h212.666c13.233,0,24-10.767,24-24V64.882
+                                C260.666,51.648,249.899,40.882,236.666,40.882z M245.666,195.784c0,4.962-4.037,9-9,9H24c-4.963,0-9-4.038-9-9V64.882
+                                c0-4.962,4.037-9,9-9h212.666c4.963,0,9,4.038,9,9V195.784z"/>
+                            <path d="M216.04,83.703h-68.933c-3.314,0-6,2.687-6,6s2.686,6,6,6h68.933c3.314,0,6-2.687,6-6S219.354,83.703,216.04,83.703z"/>
+                            <path d="M216.04,164.963h-68.933c-3.314,0-6,2.686-6,6c0,3.313,2.686,6,6,6h68.933c3.314,0,6-2.687,6-6
+                                C222.04,167.649,219.354,164.963,216.04,164.963z"/>
+                            <path d="M216.04,118.411h-41.718c-3.313,0-6,2.687-6,6s2.687,6,6,6h41.718c3.314,0,6-2.687,6-6S219.354,118.411,216.04,118.411z"/>
+                            <path d="M216.04,141.686h-41.718c-3.313,0-6,2.687-6,6c0,3.314,2.687,6,6,6h41.718c3.314,0,6-2.686,6-6
+                                C222.04,144.373,219.354,141.686,216.04,141.686z"/>
+                            <path d="M85.163,133.136c17.004,0,30.838-13.839,30.838-30.849c0-17.011-13.834-30.85-30.838-30.85
+                                c-17.009,0-30.847,13.839-30.847,30.85C54.316,119.297,68.154,133.136,85.163,133.136z M85.163,86.438
+                                c8.733,0,15.838,7.11,15.838,15.85c0,8.739-7.104,15.849-15.838,15.849c-8.738,0-15.847-7.11-15.847-15.849
+                                C69.316,93.548,76.425,86.438,85.163,86.438z"/>
+                            <path d="M97.097,138.68H73.415c-16.592,0-30.09,13.497-30.09,30.088v12.961c0,4.142,3.357,7.5,7.5,7.5s7.5-3.358,7.5-7.5v-12.961
+                                c0-8.319,6.77-15.088,15.09-15.088h23.682c8.32,0,15.09,6.768,15.09,15.088v12.961c0,4.142,3.357,7.5,7.5,7.5s7.5-3.358,7.5-7.5
+                                v-12.961C127.187,152.177,113.688,138.68,97.097,138.68z"/>
+                        </g>
+                    </svg>
+                <input type="text" name="cedula" id="cedula" onkeyup="javascript:this.value=this.value.toUpperCase();" maxlength="10" pattern="[0-9]{10}" placeholder="Ingrese su cédula" tabindex="1" required>
+            </div>
+            <div class="cont-campos">
+                <label for="campo-palabra">N° de teléfono</label>
+                <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.18164 10.7027C8.18164 10.7027 8.18168 8.13513 8.18164 6.59459C8.1816 4.74571 9.70861 3 11.9998 3C14.291 3 15.8179 4.74571 15.8179 6.59459C15.8179 8.13513 15.8179 10.7027 15.8179 10.7027" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M4.50005 11.3932C4.50001 13.1319 4.49995 16.764 4.50007 19.1988C4.5002 21.8911 8.66375 22.5 12.0001 22.5C15.3364 22.5 19.5 21.8911 19.5 19.1988L19.5 11.3932C19.5 10.8409 19.0523 10.3957 18.5 10.3957H5.50004C4.94777 10.3957 4.50006 10.8409 4.50005 11.3932ZM10.5 16.0028C10.5 16.4788 10.7069 16.9065 11.0357 17.2008V18.7529C11.0357 19.3051 11.4834 19.7529 12.0357 19.7529H12.1786C12.7309 19.7529 13.1786 19.3051 13.1786 18.7529V17.2008C13.5074 16.9065 13.7143 16.4788 13.7143 16.0028C13.7143 15.1152 12.9948 14.3957 12.1072 14.3957C11.2195 14.3957 10.5 15.1152 10.5 16.0028Z" fill="#000000"/>
+                </svg>
+
+                <input type="password" name="campo-palabra" id="campo-palabra" maxlength="10" placeholder="3000000000" tabindex="2" required>
+            </div>
+            <button type="submit" id="btn_ingresar" tabindex="3">Ingresar</button>
+        </form>
+    </main>
+</body>
+
+<script>
+document.getElementById("forma_acceso").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    
+    const cedula = document.getElementById("cedula").value.trim();
+    const telefono = document.getElementById("campo-palabra").value.trim();
+    
+    console.log("1. Enviando:", { cedula, telefono });
+    
+    if (!cedula || !telefono) {
+        alert("Complete todos los campos");
+        return;
+    }
+    
+    const btn = document.getElementById("btn_ingresar");
+    btn.disabled = true;
+    btn.textContent = "Ingresando...";
+    
+    try {
+        // Usar fetch con la URL correcta
+        const respuesta = await fetch(`http://127.0.0.1:4000/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include', 
+            body: JSON.stringify({
+                cedula: cedula,
+                telefono: telefono  
+            })
+        });
+        
+        console.log("2. Status:", respuesta.status);
+        
+        const datos = await respuesta.json();
+        console.log("3. Datos:", datos);
+        
+        if (respuesta.ok && datos.cedula) { 
+                // Si hay una cédula en la respuesta, es que el login fue exitoso
+                sessionStorage.setItem('nombre_tendero', datos.nombre);
+                sessionStorage.setItem('cedula_tendero', datos.cedula);
+                window.location.href = "Dashboard.html";
+            
+        } else {
+            alert(datos.mensaje || datos.error || "Error al iniciar sesión");
+            btn.disabled = false;
+            btn.textContent = "Ingresar";
+        }
+        
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Error de conexión con el servidor");
+        btn.disabled = false;
+        btn.textContent = "Ingresar";
+    }
+});
+</script>
+</html>

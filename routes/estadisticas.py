@@ -1,4 +1,5 @@
 from flask import request, jsonify
+from datetime import datetime
 from models.estadisticas import Estadisticas
 
 def cargar_rutas_estadisticas(app):
@@ -7,27 +8,84 @@ def cargar_rutas_estadisticas(app):
     def consulta_estadisticas():
         try:
             dataEstadistica = request.get_json()
-            print(f"fecha estadistica {dataEstadistica}")
-            estadisticasModel=Estadisticas()
-            idTendero=dataEstadistica['idTendero']
-            fechaInicial=dataEstadistica['fechaInicial']
-            fechaFin=dataEstadistica['fechaFin']
-            resultadoDatos=estadisticasModel.obtener_estadisticas(idTendero,fechaInicial,fechaFin)
+            print(f"datos recibidos {dataEstadistica}")
 
-            if resultadoDatos:
-                print(f"resultado Estadisticas {resultadoDatos}")
-            
-                return jsonify([resultadoDatos]),200
-            else:
-                print(f"resultado bien malo {resultadoDatos}")
-                return jsonify({resultadoDatos}),400
-                
-        
-            
+            estadisticasModel = Estadisticas()
+
+            idTendero = dataEstadistica['idTendero']
+
+            # Fecha actual calculada en el backend
+            hoy = datetime.now().strftime('%Y-%m-%d')
+
+            fechaInicial = hoy
+            fechaFin = hoy
+
+            resultadoDatos = estadisticasModel.obtener_estadisticas(
+                idTendero,
+                fechaInicial,
+                fechaFin
+            )
+
+            print(f"resultado Estadisticas {resultadoDatos}")
+
+            return jsonify(resultadoDatos)
+
         except Exception as e:
+            print("Error en consultarEstadisticas:", e)
             return jsonify({"error": str(e)}), 500
         
+        
+    @app.route("/historialActividades", methods=["POST"])
+    def historial_actividades():
 
+        data = request.get_json()
+
+        idTendero = data["idTendero"]
+        fechaInicial = data.get("fechaInicial")
+        fechaFin = data.get("fechaFin")
+
+        # Si no vienen fechas, usar hoy
+        if not fechaInicial or not fechaFin:
+            hoy = datetime.now().strftime('%Y-%m-%d')
+            fechaInicial = hoy
+            fechaFin = hoy
+
+        modelo = Estadisticas()
+        resultado = modelo.obtener_historial(idTendero, fechaInicial, fechaFin)
+
+        return jsonify(resultado)
+    
+    @app.route("/reportePorRango", methods=["POST"])
+    def reporte_por_rango():
+        try:
+            data = request.get_json()
+            id_tendero = data.get('idTendero')
+            fecha_inicio = data.get('fechaInicio')
+            fecha_fin = data.get('fechaFin')
+
+            modelo = Estadisticas()
+            datos = modelo.obtener_reporte_rango(id_tendero, fecha_inicio, fecha_fin)
+
+            # --- CORRECCIÓN DE CODEXXO: Convertir None a 0 ---
+            # Usamos 'or 0' para que si el valor es None o False, se convierta en 0.
+            ventas = datos.get('total_ventas') or 0
+            costos = datos.get('total_costos') or 0
+            gastos = datos.get('total_gastos') or 0
+            
+            # Calculamos la utilidad de forma segura
+            utilidad = ventas - (costos + gastos)
+            
+            # Actualizamos el diccionario con los valores limpios
+            datos['total_ventas'] = ventas
+            datos['total_costos'] = costos
+            datos['total_gastos'] = gastos
+            datos['utilidad'] = utilidad
+
+            return jsonify(datos)
+        except Exception as e:
+            # Esto te ayudará a ver el error real en la terminal de VS Code
+            print(f"Error en reportePorRango: {e}") 
+            return jsonify({"error": str(e)}), 500
 #     @app.route("/consultaPrimerFecha", methods=["POST"])
 #     def consultar_fecha():
 #         try:

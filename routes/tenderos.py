@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import session, request, jsonify
 from models.tenderos import Tenderos
 from argon2 import PasswordHasher
 
@@ -36,10 +36,11 @@ def cargar_rutas_Tenderos(app):
 
 
     @app.route("/login", methods=["POST"])
-    def login():
+    def inicio_sesion():
         try:
             data = request.get_json()
             print("Datos recibidos en login:", data)
+
             cedula = data.get("cedula")
             telefono = data.get("telefono")
 
@@ -48,19 +49,27 @@ def cargar_rutas_Tenderos(app):
 
             tendero_model = Tenderos()
             usuario = tendero_model.validar_login(cedula)
-            print(f"datos recibidos consulta",usuario)
+
+            print("datos recibidos consulta", usuario)
+
             if not usuario:
                 return jsonify({"error": "Credenciales incorrectas"}), 401
+
             try:
                 hp.verify(usuario["llave"], telefono)
-            except:
-                return jsonify({"error":"Credenciales incorrectas"}), 401
+            except Exception:
+                return jsonify({"error": "Credenciales incorrectas"}), 401
+
+            # Guardar sesión
+            session["cedula"] = usuario["cedula"]
+            session["nombre"] = usuario["nombre"]
+
+            del usuario["llave"]  # eliminar contraseña antes de enviarla
 
             return jsonify(usuario), 200
-
         except Exception as e:
             print("Error en login:", e)
-            return jsonify({"error"}), 500
+            return jsonify({"error": str(e)}), 500
         
     @app.route("/consultaCedulaTendero", methods=["POST"])
     def consultaTendero():

@@ -1,0 +1,308 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+*{
+    box-sizing: border-box;
+    transition: all 0.7s;
+}
+
+a{ 
+    color: inherit;
+    text-decoration: none;
+}
+
+::placeholder, ::-webkit-input-placeholder, :-moz-placeholder{
+        color: inherit;
+    }
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+}
+
+:root{
+        --blanco: rgb(252,252,252);
+        --lila: #F0ECFA;
+        --lila-input: #DED3FF;
+        --morado: #492C6F;
+    }
+
+/* FONDO */
+body {
+  background-color: var(--lila);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* CONTENEDOR */
+#ppal {
+  width: 500px;
+}
+
+/* TARJETA */
+#forma_acceso {
+    background: var(--lila);
+    padding: 60px 40px 70px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    padding: 50px;
+}
+
+/* LOGO */
+#cont_logo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+#logo img {
+  width: 150px;
+}
+
+#nombre_logo {
+  margin-top: 10px;
+  font-size: 40px;
+}
+
+/* CAMPOS */
+.cont-campos {
+  margin-top: 25px;
+  text-align: left;
+  position: relative;
+   margin: 14px 0;
+}
+
+.cont-campos label {
+  font-size: 15px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* INPUT */
+.cont-campos input {
+  width: 100%;
+  padding: 14px 14px 14px 58px;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  background: var(--lila-input);
+   font-size: 1.1em;
+}
+
+/* FIX PARA AUTOCOMPLETADO (AÑADIDO POR CODEXXO) */
+.cont-campos input:-webkit-autofill,
+.cont-campos input:-webkit-autofill:hover, 
+.cont-campos input:-webkit-autofill:focus {
+    /* Mantiene el color del texto original */
+    -webkit-text-fill-color: var(--morado);
+    /* Usa una sombra interna para mantener el color lila de tu diseño */
+    -webkit-box-shadow: 0 0 0px 1000px var(--lila-input) inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* SVG */
+.cont-campos svg {
+  width: 30px;
+  height: 40px;
+  position: absolute;
+  left: 12px;
+  top: 36px; 
+  fill: #545454;
+}
+
+/* LINKS */
+.cont-btns {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.cont-btns a {
+  text-decoration: none;
+  color: var(--morado);
+  margin-left: 5px;
+  font-weight: 500;
+}
+
+/* BOTÓN */
+#btn_ingresar {
+  width: 100%;
+  margin-top: 35px;
+  background: var(--morado);
+  color: var(--blanco);
+  border: none;
+  padding: 12px 40px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: 0.3s;
+}
+
+#btn_ingresar:hover {
+  background: var(--morado);
+}
+/* Móviles pequeños */
+        @media screen and (max-width: 480px) {
+            body {
+                padding: 10px;
+                align-items: flex-start;
+                padding-top: 2vh;
+            }
+
+            #forma_acceso {
+                padding: 25px 15px;
+                border-radius: 16px;
+            }
+
+            #logo img {
+                width: 80px;
+            }
+
+            #nombre_logo {
+                font-size: 28px;
+                margin-top: 0;
+            }
+
+            .cont-campos {
+                margin: 12px 0;
+            }
+
+            .cont-campos label {
+                font-size: 13px;
+                margin-bottom: 4px;
+            }
+
+            .cont-campos input {
+                padding: 12px 12px 12px 44px;
+                font-size: 14px;
+                border-radius: 10px;
+            }
+
+            .cont-campos svg {
+                width: 20px;
+                height: 20px;
+                top: 38px;
+                left: 12px;
+            }
+
+            .cont-btns {
+                font-size: 13px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .cont-btns a {
+                margin-left: 0;
+                display: inline-block;
+            }
+
+            #btn_ingresar {
+                padding: 12px 16px;
+                font-size: 16px;
+                margin-top: 20px;
+                border-radius: 10px;
+            }
+        }
+
+/* Móviles muy pequeños */
+        @media screen and (max-width: 360px) {
+            #forma_acceso {
+                padding: 20px 12px;
+            }
+
+            #logo img {
+                width: 70px;
+            }
+
+            #nombre_logo {
+                font-size: 24px;
+            }
+
+            .cont-campos input {
+                padding: 10px 10px 10px 40px;
+                font-size: 13px;
+            }
+
+            .cont-campos svg {
+                width: 18px;
+                height: 18px;
+                top: 36px;
+                left: 10px;
+            }
+
+            .cont-campos label {
+                font-size: 12px;
+            }
+        }
+
+/* Pantallas grandes */
+        @media screen and (min-width: 1801px) {
+            #ppal {
+                max-width: 550px;
+            }
+
+            #forma_acceso {
+                padding: 50px 40px;
+            }
+
+            #logo img {
+                width: 150px;
+            }
+
+            #nombre_logo {
+                font-size: 42px;
+            }
+
+            .cont-campos input {
+                padding: 16px 16px 16px 58px;
+                font-size: 16px;
+            }
+
+            #btn_ingresar {
+                padding: 14px 40px;
+                font-size: 18px;
+            }
+        }
+
+/* Orientación horizontal en móviles */
+        @media screen and (max-height: 600px) and (orientation: landscape) {
+            body {
+                padding: 10px;
+                align-items: center;
+            }
+
+            #forma_acceso {
+                padding: 15px 20px;
+            }
+
+            #logo img {
+                width: 60px;
+            }
+
+            #nombre_logo {
+                font-size: 24px;
+                margin-top: 0;
+            }
+
+            .cont-campos {
+                margin: 8px 0;
+            }
+
+            #btn_ingresar {
+                margin-top: 15px;
+                padding: 8px 16px;
+            }
+        }

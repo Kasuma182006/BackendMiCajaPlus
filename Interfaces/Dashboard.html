@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/Interfaces/CodigosMiCaja/FormatoDasboard.css">
+
+    <!-- jQuery UI CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+</head>
+<body>
+    <main id="cont_ppal">
+
+        <!-- ENCABEZADO -->
+        <section id="encabezado">
+
+            <!-- Usuario izquierda -->
+            <div class="usuario_dropdown">
+                <div class="usuario_info">
+                    <span id="nombre_tendero">Cargando...</span>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="8" r="4"/>
+                        <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Centro -->
+            <div id="centro_header">
+                <img src="/Interfaces/ComponentesMiCaja/LogoMiCajaPlus.png">
+                <span>MiCaja+</span>
+            </div>
+
+            <!-- Botón hamburguesa -->
+            <div id="btn_menu">
+                <svg viewBox="0 0 24 24" width="35" height="35" fill="none"
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+            </div>
+
+        </section>
+        <!-- TARJETAS SUPERIORES -->
+        <section id="tarjeta_superior">
+
+            <div id="grafica">
+                <h2 style="text-align:center;">Reportes</h2>
+                <canvas id="myChart"></canvas>
+            </div>
+
+            <div id="resumen_financiero">
+                <!-- VENTAS -->
+                <div id="ventas">
+                    <div class="tarjeta_top">
+                        <div class="icono">
+                            <svg width="40" height="40" viewBox="0 0 24 24" 
+                                    fill="none" stroke="currentColor" stroke-width="2" 
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="12" width="4" height="8"></rect>
+                                <rect x="10" y="8" width="4" height="12"></rect>
+                                <rect x="17" y="4" width="4" height="16"></rect>
+                            </svg>
+
+                        </div>
+                    </div>
+                    <div class="info">
+                        <h3>Ventas</h3>
+                        <span class="date"></span>
+                        <p class="valor"></p>
+                    </div>
+                </div>
+
+                <!-- COSTOS -->
+                <div id="costos">
+                    <div class="tarjeta_top">
+                        <div class="icono">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 3v18h18"/>
+                                <path d="M7 14l4-4 3 3 4-6"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="info">
+                        <h3>Costos</h3>
+                        <span class="date"></span>
+                        <p class="valor"></p>
+                    </div>
+                </div>
+
+                <!-- GASTOS -->
+                <div id="gastos">
+                    <div class="tarjeta_top">
+                        <div class="icono">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2h12v20l-2-1-2 1-2-1-2 1-2-1-2 1z"/>
+                                <path d="M9 7h6"/>
+                                <path d="M9 11h6"/>
+                                <path d="M9 15h4"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="info">
+                        <h3>Gastos</h3>
+                        <span class="date"></span>
+                        <p class="valor"></p>
+                    </div>
+                </div>
+
+                <!-- CRÉDITO -->
+                <div id="credito">
+                    <div class="tarjeta_top">
+                        <div class="icono">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                                <path d="M2 10h20"/><path d="M6 15h4"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="info">
+                        <h3>Créditos</h3>
+                        <span class="date"></span>
+                        <p class="valor"></p>
+                    </div>
+                </div>
+
+                <!-- UTILIDAD -->
+                <div id="utilidad">
+                    <div class="content">
+                        <div class="icono_utilidad">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 17l6-6 4 4 7-7"/>
+                                <path d="M14 8h6v6"/>
+                            </svg>
+                        </div>
+                        <h3>Utilidad</h3>
+                        <p class="valor"></p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        
+        <section id="historial">
+            <h2 style="text-align:center;">Historial de Actividades</h2>
+            <table id="datos_historial_actividades" class="display cell-border stripe">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Mensaje</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+        
+        <aside id="menu_opciones">
+            <form>
+                <label for="fechaInicial" id="tema_subtitulo">
+                    Consulta tu información por rango de fechas
+                </label>                
+                <label for="fecha_inicial">Fecha Inicial:</label>
+                <input type="date" id="fecha_inicial">
+                
+                <label for="fecha_final">Fecha Final:</label>
+                <input type="date" id="fecha_final">
+                
+                <div class="botones-accion">
+                    <button type="submit" class="btn-buscar">Buscar</button>
+                    <button type="button" id="btn-quitar-filtros" class="btn-quitar-filtros">
+                        Quitar Filtros
+                    </button>
+                </div>
+
+                <!--SVG cerrar sesión-->
+                <div id="opcion_cerrar">
+                    <svg width="80" height="80" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" transform="rotate(0 0 0)">
+                        <path d="M11.25 2.62451C10.0074 2.62451 9 3.63187 9 4.87451V6.60927C9.76128 6.98704 10.2493 7.76589 10.2493 8.62451V10.3745L11.75 10.3745C12.9926 10.3745 14 11.3819 14 12.6245C14 13.8672 12.9926 14.8745 11.75 14.8745H10.2493V16.6245C10.2493 17.4831 9.76128 18.262 9 18.6397V20.3745C9 21.6172 10.0074 22.6245 11.25 22.6245H17.25C18.4926 22.6245 19.5 21.6172 19.5 20.3745V4.87451C19.5 3.63187 18.4926 2.62451 17.25 2.62451H11.25Z" fill="#424146"/>
+                        <path d="M8.28618 7.93158C8.5665 8.04764 8.74928 8.32114 8.74928 8.62453L8.74928 11.8745L11.75 11.8745C12.1642 11.8745 12.5 12.2103 12.5 12.6245C12.5 13.0387 12.1642 13.3745 11.75 13.3745L8.74928 13.3745V16.6245C8.74928 16.9279 8.56649 17.2014 8.28617 17.3175C8.00585 17.4335 7.68322 17.3693 7.46877 17.1547L3.50385 13.187C3.34818 13.0496 3.25 12.8485 3.25 12.6245C3.25 12.4016 3.34723 12.2015 3.50159 12.0641L7.46878 8.09437C7.68324 7.87978 8.00587 7.81552 8.28618 7.93158Z" fill="#424146"/>
+                    </svg>
+                </div>
+                <div>
+                </div>
+            </form>
+        </aside>
+        
+    </main>
+
+    <!-- jQuery (SIEMPRE primero) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- jQuery UI -->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/i18n/jquery-ui-i18n.min.js"></script>
+
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+
+    <script src="js/ResumenDashboard.js"></script>
+    <script src="js/FechasDashboard.js"></script>
+    <script src="js/DatatableDashboard.js"></script>
+    <script src="js/SesionDashboard.js"></script>
+</body>
+
+</html>
