@@ -22,7 +22,6 @@ def cargar_rutas_inventario(app):
             else:
                 
                 producto["nombre"] = sinonimo.get("nombre")
-                producto["presentacion"]= sinonimo.get("presentacion")
                 print(f"DEBUG: Buscando producto en BD: {producto.get('nombre')}")
                 productoInventario = inventario.buscarProducto(producto.get("idTendero"),producto.get("nombre"),producto.get("presentacion"))
 

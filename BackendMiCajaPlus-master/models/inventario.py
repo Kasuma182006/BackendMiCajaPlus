@@ -5,7 +5,7 @@ class Inventario():
     def buscarSinonimoProducto(self,producto):
         conexion=obtenerConexion()
         cursor=conexion.cursor(dictionary=True)
-        cursor.execute("""SELECT productos.nombre, productos.presentacion FROM productos INNER JOIN diccionarioproductos ON productos.idProductos = diccionarioproductos.idProductos WHERE diccionarioproductos.sinonimo = %s """,(producto.get("nombre"),))
+        cursor.execute("""SELECT productos.nombre FROM productos INNER JOIN diccionarioproductos ON productos.idProductos = diccionarioproductos.idProductos WHERE diccionarioproductos.sinonimo = %s """,(producto.get("nombre"),))
         resultado=cursor.fetchone()
         cursor.close()
         conexion.close()
